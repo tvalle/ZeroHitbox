@@ -1,0 +1,17 @@
+Library/*
+Temp/*
+obj/*
+build/*
+build-standalone/*
+Builds/*
+
+*.unityproj
+
+*csproj
+
+*.pidb
+*.sln
+*.sln.DotSettings
+*.userprefs
+*.DS_Store
+*.suo
