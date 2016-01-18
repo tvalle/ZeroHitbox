@@ -20,6 +20,8 @@ public class ZeroHitboxEditor : Editor
     private TargetComponents targetComponents;
     private ZeroHitBoxClipsFeeder zeroHitboxClipsFeeder;
 
+    private static GUIStyle hitboxBackgroundStyle;
+
     #region Drawing Methods
     public override void OnInspectorGUI()
     {
@@ -160,13 +162,13 @@ public class ZeroHitboxEditor : Editor
     {
         GUILayout.BeginHorizontal();
         GUILayout.Label("Sprite", GUILayout.Width(70));
-        currentKeyframe.Sprite = EditorGUILayout.ObjectField(currentKeyframe.Sprite, typeof(Sprite)) as Sprite;
+        currentKeyframe.Sprite = EditorGUILayout.ObjectField(currentKeyframe.Sprite, typeof(Sprite), true) as Sprite;
         GUILayout.EndHorizontal();
 
+        GUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Frame " + (keyframesIndex + 1) + "/" +
                                          currentClip.keyframes.Length);
 
-        GUILayout.BeginHorizontal();
         if (GUILayout.Button("<", GUILayout.Width(30)))
         {
             keyframesIndex--;
@@ -192,9 +194,7 @@ public class ZeroHitboxEditor : Editor
         {
             for (int i = 0; i < currentKeyframe.hitboxes.Length; i++)
             {
-                GUIStyle blackBackground = new GUIStyle();
-                blackBackground.normal.background = MakeTex(1, 1, Color.gray);
-                GUILayout.BeginVertical(blackBackground);
+                GUILayout.BeginVertical(hitboxBackgroundStyle);
                 GUILayout.Label("Hitbox " + i);
 
                 GUILayout.BeginHorizontal();
@@ -211,6 +211,8 @@ public class ZeroHitboxEditor : Editor
                     currentKeyframe.hitboxes[i].Radius = EditorGUILayout.FloatField("Radius ", currentKeyframe.hitboxes[i].Radius);
                 }
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("", GUILayout.ExpandWidth(true));
                 if (GUILayout.Button("Remove", GUILayout.Width(60)))
                 {
                     for (int j = i; j < currentKeyframe.hitboxes.Length - 1; j++)
@@ -221,6 +223,7 @@ public class ZeroHitboxEditor : Editor
                     Array.Resize(ref currentKeyframe.hitboxes, currentKeyframe.hitboxes.Length - 1);
                     SceneView.RepaintAll();
                 }
+                GUILayout.EndHorizontal();
                 GUILayout.EndVertical();
 
                 GUILayout.BeginVertical(GUILayout.Height(10));
@@ -261,7 +264,7 @@ public class ZeroHitboxEditor : Editor
             SceneView.RepaintAll();
         }
     }
-    private Texture2D MakeTex(int width, int height, Color col)
+    private Texture2D MakeTexture(int width, int height, Color col)
     {
         Color[] pix = new Color[width * height];
 
@@ -279,6 +282,17 @@ public class ZeroHitboxEditor : Editor
     void OnEnable()
     {
         EditorApplication.update += OnEditorUpdate;
+
+        if (hitboxBackgroundStyle == null)
+        {
+            hitboxBackgroundStyle = new GUIStyle();
+            hitboxBackgroundStyle.normal.background = MakeTexture(1, 1, new Color(0f, 0f, 0f, 0.2f));
+        }
+        //When changing scenes the background is deleted
+        else if (hitboxBackgroundStyle.normal.background == null)
+        {
+            hitboxBackgroundStyle.normal.background = MakeTexture(1, 1, new Color(0f, 0f, 0f, 0.2f));
+        }
 
         targetComponents = new TargetComponents(target);
         zeroHitboxClipsFeeder = new ZeroHitBoxClipsFeeder(targetComponents.ZeroHitbox);
@@ -399,7 +413,7 @@ public class ZeroHitBoxClipsFeeder
             FeedClipsStringFromAnimator(animator);
         }
 
-        
+
     }
 }
 
