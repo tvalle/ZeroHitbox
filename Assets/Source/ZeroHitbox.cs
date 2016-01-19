@@ -73,8 +73,6 @@ public class AAnimationClip
 [RequireComponent(typeof(Animator))]
 public class ZeroHitbox : MonoBehaviour
 {
-    public bool showHitbox;
-
     public bool HasLists
     {
         get

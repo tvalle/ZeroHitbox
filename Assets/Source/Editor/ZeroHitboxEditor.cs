@@ -7,9 +7,6 @@ using System;
 [CustomEditor(typeof(ZeroHitbox))]
 public class ZeroHitboxEditor : Editor
 {
-    private bool showGUI = true;
-    private bool previousShowGUI;
-
     //TODO check how to save this when unfocusing
     private bool showHitboxesGUI = true;
 
@@ -55,12 +52,6 @@ public class ZeroHitboxEditor : Editor
 
         if (showHitboxesGUI)
         {
-            if (previousShowGUI != showGUI)
-            {
-                previousShowGUI = showGUI;
-                SceneView.RepaintAll();
-            }
-
             DrawHitboxes(currentKeyframe);
         }
 
@@ -71,7 +62,7 @@ public class ZeroHitboxEditor : Editor
     {
         serializedObject.Update();
 
-        if (showGUI && targetComponents.ZeroHitbox.AnimationClips != null)
+        if (targetComponents.ZeroHitbox.AnimationClips != null)
         {
             AKeyframe currentKeyframe;
 
@@ -302,8 +293,6 @@ public class ZeroHitboxEditor : Editor
         //TODO maybe get previously set value?
         keyframesIndex = 0;
         animationClipsIndex = 0;
-
-        showGUI = targetComponents.ZeroHitbox.showHitbox;
     }
 
     private void OnLostFocus()
@@ -346,8 +335,6 @@ public class ZeroHitboxEditor : Editor
             if (targetComponents.ZeroHitbox.AnimationClips[animationClipsIndex].keyframes[keyframesIndex].Sprite != null)
                 targetComponents.SpriteRenderer.sprite = targetComponents.ZeroHitbox.AnimationClips[animationClipsIndex].keyframes[keyframesIndex].Sprite;
         }
-
-        targetComponents.ZeroHitbox.showHitbox = showGUI;
     }
 }
 
