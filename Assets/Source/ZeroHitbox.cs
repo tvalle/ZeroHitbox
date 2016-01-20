@@ -22,7 +22,6 @@ public enum HitboxShape
 [Serializable]
 public struct Hitbox
 {
-    //Refactor this to use a pattern to define the shape and algorithms behind it
     public HitboxType Type;
     public HitboxShape Shape;
 
@@ -30,6 +29,26 @@ public struct Hitbox
 
     public float Radius;
     public float CircleX, CircleY;
+
+    public Vector3 GetHandlePosition()
+    {
+        if (Shape == HitboxShape.Rectangle)
+        {
+            return new Vector3(Rect.x, Rect.y, 0f);
+        }
+        else
+        {
+            return new Vector3(CircleX, CircleY, 0f);
+        }
+    }
+    public Vector3 GetHandleXScale()
+    {
+        return new Vector3(Rect.x + Rect.width, Rect.y + Rect.height / 2);
+    }
+    public Vector3 GetHandleYScale()
+    {
+        return new Vector3(Rect.x + Rect.width / 2, Rect.y + Rect.height);
+    }
 
     public Hitbox(Rect rect, HitboxType hitboxType)
     {

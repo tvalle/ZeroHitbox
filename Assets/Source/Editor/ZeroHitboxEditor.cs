@@ -72,63 +72,65 @@ public class ZeroHitboxEditor : Editor
             {
                 for (int i = 0; i < currentKeyframe.hitboxes.Length; i++)
                 {
-                    Vector3 handlePos;
+                    Hitbox currentHitbox = currentKeyframe.hitboxes[i];
 
-                    //TODO implement properties in the hitbox to hide this ifs checking the shape to get the position
-                    if (currentKeyframe.hitboxes[i].Shape == HitboxShape.Rectangle)
-                    {
-                        handlePos = new Vector3(currentKeyframe.hitboxes[i].Rect.x, currentKeyframe.hitboxes[i].Rect.y, 0f);
-                    }
-                    else
-                    {
-                        handlePos = new Vector3(currentKeyframe.hitboxes[i].CircleX, currentKeyframe.hitboxes[i].CircleY, 0f);
-                    }
-
-                    Vector3 handleXScale = new Vector3(currentKeyframe.hitboxes[i].Rect.x + currentKeyframe.hitboxes[i].Rect.width,
-                                                       currentKeyframe.hitboxes[i].Rect.y + currentKeyframe.hitboxes[i].Rect.height / 2);
-                    Vector3 handleYScale = new Vector3(currentKeyframe.hitboxes[i].Rect.x + currentKeyframe.hitboxes[i].Rect.width / 2,
-                                                       currentKeyframe.hitboxes[i].Rect.y + currentKeyframe.hitboxes[i].Rect.height);
+                    Vector3 handlePosition = currentHitbox.GetHandlePosition();
 
                     if (Tools.current == Tool.Move)
                     {
-                        Vector3 moveHandlePos;
-                        moveHandlePos = Handles.FreeMoveHandle(handlePos + targetComponents.GameObject.transform.position, Quaternion.identity, 0.05f, Vector3.one, Handles.RectangleCap);
-                        moveHandlePos -= targetComponents.GameObject.transform.position;
-
-                        if (currentKeyframe.hitboxes[i].Shape == HitboxShape.Rectangle)
-                        {
-                            currentKeyframe.hitboxes[i].Rect = new Rect(moveHandlePos.x, moveHandlePos.y,
-                                                                    currentKeyframe.hitboxes[i].Rect.width,
-                                                                    currentKeyframe.hitboxes[i].Rect.height);
-                        }
-                        else
-                        {
-                            currentKeyframe.hitboxes[i].CircleX = moveHandlePos.x;
-                            currentKeyframe.hitboxes[i].CircleY = moveHandlePos.y;
-                        }
+                        currentHitbox = DrawMove(currentHitbox, handlePosition);
                     }
-                    //TODO change this && we have to add a handle to resize circles
-                    if (Tools.current == Tool.Scale && currentKeyframe.hitboxes[i].Shape == HitboxShape.Rectangle)
+                    if (Tools.current == Tool.Scale)
                     {
-                        Vector3 ScaleHandleXPos;
-                        Vector3 ScaleHandleYPos;
-
-                        ScaleHandleXPos = Handles.FreeMoveHandle(handleXScale + targetComponents.GameObject.transform.position, Quaternion.identity, 0.05f, Vector3.one, Handles.DotCap);
-                        ScaleHandleXPos -= targetComponents.GameObject.transform.position;
-
-                        ScaleHandleYPos = Handles.FreeMoveHandle(handleYScale + targetComponents.GameObject.transform.position, Quaternion.identity, 0.05f, Vector3.one, Handles.DotCap);
-                        ScaleHandleYPos -= targetComponents.GameObject.transform.position;
-
-                        currentKeyframe.hitboxes[i].Rect = new Rect(currentKeyframe.hitboxes[i].Rect.x, currentKeyframe.hitboxes[i].Rect.y,
-                                                      ScaleHandleXPos.x - currentKeyframe.hitboxes[i].Rect.x,
-                                                      ScaleHandleYPos.y - currentKeyframe.hitboxes[i].Rect.y);
+                        currentHitbox = DrawScale(currentHitbox);
                     }
+
+                    currentKeyframe.hitboxes[i] = currentHitbox;
                 }
             }
         }
 
         EditorUtility.SetDirty(target);
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private Hitbox DrawScale(Hitbox currentHitbox)
+    {
+        Vector3 ScaleHandleXPos;
+        Vector3 ScaleHandleYPos;
+
+        ScaleHandleXPos = Handles.FreeMoveHandle(currentHitbox.GetHandleXScale() + targetComponents.GameObject.transform.position,
+                                                 Quaternion.identity,
+                                                 0.05f,
+                                                 Vector3.one,
+                                                 Handles.DotCap);
+        ScaleHandleXPos -= targetComponents.GameObject.transform.position;
+
+        ScaleHandleYPos = Handles.FreeMoveHandle(currentHitbox.GetHandleYScale() + targetComponents.GameObject.transform.position,
+                                                 Quaternion.identity,
+                                                 0.05f,
+                                                 Vector3.one,
+                                                 Handles.DotCap);
+        ScaleHandleYPos -= targetComponents.GameObject.transform.position;
+
+        currentHitbox.Rect = new Rect(currentHitbox.Rect.x, currentHitbox.Rect.y,
+                                      ScaleHandleXPos.x - currentHitbox.Rect.x,
+                                      ScaleHandleYPos.y - currentHitbox.Rect.y);
+        return currentHitbox;
+    }
+    private Hitbox DrawMove(Hitbox currentHitbox, Vector3 handlePosition)
+    {
+        Vector3 moveHandlePos = Handles.FreeMoveHandle(handlePosition + targetComponents.GameObject.transform.position, Quaternion.identity, 0.05f, Vector3.one, Handles.RectangleCap);
+        moveHandlePos -= targetComponents.GameObject.transform.position;
+
+        if (currentHitbox.Shape == HitboxShape.Rectangle)
+        {
+            currentHitbox.Rect = new Rect(moveHandlePos.x, moveHandlePos.y,
+                                                    currentHitbox.Rect.width,
+                                                    currentHitbox.Rect.height);
+        }
+
+        return currentHitbox;
     }
 
     private void DrawAnimationClips()
