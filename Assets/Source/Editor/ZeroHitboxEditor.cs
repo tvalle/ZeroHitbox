@@ -74,16 +74,7 @@ public class ZeroHitboxEditor : Editor
                 {
                     Hitbox currentHitbox = currentKeyframe.hitboxes[i];
 
-                    Vector3 handlePosition = currentHitbox.GetHandlePosition();
-
-                    if (Tools.current == Tool.Move)
-                    {
-                        currentHitbox = DrawMove(currentHitbox, handlePosition);
-                    }
-                    if (Tools.current == Tool.Scale)
-                    {
-                        currentHitbox = DrawScale(currentHitbox);
-                    }
+                    ZeroHitbox.ShapeDictionary[currentHitbox.Shape].DrawSceneHandle(currentHitbox, targetComponents);
 
                     currentKeyframe.hitboxes[i] = currentHitbox;
                 }
@@ -92,45 +83,6 @@ public class ZeroHitboxEditor : Editor
 
         EditorUtility.SetDirty(target);
         serializedObject.ApplyModifiedProperties();
-    }
-
-    private Hitbox DrawScale(Hitbox currentHitbox)
-    {
-        Vector3 ScaleHandleXPos;
-        Vector3 ScaleHandleYPos;
-
-        ScaleHandleXPos = Handles.FreeMoveHandle(currentHitbox.GetHandleXScale() + targetComponents.GameObject.transform.position,
-                                                 Quaternion.identity,
-                                                 0.05f,
-                                                 Vector3.one,
-                                                 Handles.DotCap);
-        ScaleHandleXPos -= targetComponents.GameObject.transform.position;
-
-        ScaleHandleYPos = Handles.FreeMoveHandle(currentHitbox.GetHandleYScale() + targetComponents.GameObject.transform.position,
-                                                 Quaternion.identity,
-                                                 0.05f,
-                                                 Vector3.one,
-                                                 Handles.DotCap);
-        ScaleHandleYPos -= targetComponents.GameObject.transform.position;
-
-        currentHitbox.Rect = new Rect(currentHitbox.Rect.x, currentHitbox.Rect.y,
-                                      ScaleHandleXPos.x - currentHitbox.Rect.x,
-                                      ScaleHandleYPos.y - currentHitbox.Rect.y);
-        return currentHitbox;
-    }
-    private Hitbox DrawMove(Hitbox currentHitbox, Vector3 handlePosition)
-    {
-        Vector3 moveHandlePos = Handles.FreeMoveHandle(handlePosition + targetComponents.GameObject.transform.position, Quaternion.identity, 0.05f, Vector3.one, Handles.RectangleCap);
-        moveHandlePos -= targetComponents.GameObject.transform.position;
-
-        if (currentHitbox.Shape == HitboxShape.Rectangle)
-        {
-            currentHitbox.Rect = new Rect(moveHandlePos.x, moveHandlePos.y,
-                                                    currentHitbox.Rect.width,
-                                                    currentHitbox.Rect.height);
-        }
-
-        return currentHitbox;
     }
 
     private void DrawAnimationClips()
@@ -404,24 +356,4 @@ public class ZeroHitBoxClipsFeeder
 
 
     }
-}
-
-public struct TargetComponents
-{
-    public TargetComponents(UnityEngine.Object target)
-    {
-        ZeroHitbox = (target as ZeroHitbox);
-        GameObject = ZeroHitbox.gameObject;
-
-        Animator = ZeroHitbox.GetComponent<Animator>();
-
-        SpriteRenderer = GameObject.GetComponent<SpriteRenderer>();
-        spriteWhenGotFocus = SpriteRenderer.sprite;
-    }
-
-    public GameObject GameObject { get; set; }
-    public ZeroHitbox ZeroHitbox { get; set; }
-    public SpriteRenderer SpriteRenderer { get; set; }
-    public Sprite spriteWhenGotFocus { get; set; } //TODO always has to get this in OnEnable, even if targetcomponents are the same
-    public Animator Animator { get; set; }
 }

@@ -141,6 +141,12 @@ public class ZeroHitbox : MonoBehaviour
         { HitboxType.Projectile, new Color(1f, 1f, 0f, 0.4f) },
     };
 
+    public static Dictionary<HitboxShape, IShape> ShapeDictionary = new Dictionary<HitboxShape, IShape>
+    {
+        { HitboxShape.Rectangle, new Rectangle() },
+        { HitboxShape.Circle, new Circle() }
+    };
+
     //Used for AlphaHitBoxManager to check Enter, Stay and Exit messages
     [HideInInspector]
     public bool MarkedForCollision;
@@ -192,6 +198,7 @@ public class ZeroHitbox : MonoBehaviour
     {
         if (AnimationClips != null)
         {
+            //TODO check if this is redundant
             if (Application.isPlaying)
             {
                 if (animator != null)
@@ -225,22 +232,7 @@ public class ZeroHitbox : MonoBehaviour
             {
                 Gizmos.color = ColorDictionary[hitboxList[i].Type];
 
-                if (hitboxList[i].Shape == HitboxShape.Rectangle)
-                {
-                    Vector3 hitboxPos = new Vector3((hitboxList[i].Rect.x + hitboxList[i].Rect.width / 2) * this.transform.localScale.x,
-                                                (hitboxList[i].Rect.y + hitboxList[i].Rect.height / 2) * this.transform.localScale.y,
-                                                0f);
-                    Vector3 hitboxSize = new Vector3(hitboxList[i].Rect.width, hitboxList[i].Rect.height, 0.1f);
-                    Gizmos.DrawCube(hitboxPos + this.transform.position, hitboxSize);
-                }
-                else
-                {
-                    Vector3 hitboxPos = new Vector3(hitboxList[i].CircleX * this.transform.localScale.x,
-                                                    hitboxList[i].CircleY * this.transform.localScale.y,
-                                                    0f);
-
-                    Gizmos.DrawSphere(hitboxPos + this.transform.position, hitboxList[i].Radius);
-                }
+                ShapeDictionary[hitboxList[i].Shape].DrawGizmo(hitboxList[i], this.transform);
             }
         }
     }
