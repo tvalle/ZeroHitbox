@@ -134,6 +134,13 @@ public class ZeroHitbox : MonoBehaviour
 
     private Animator animator;
 
+    public static Dictionary<HitboxType, Color> ColorDictionary = new Dictionary<HitboxType, Color>()
+    {
+        { HitboxType.Hittable, new Color(0f, 0f, 1f, 0.4f) },
+        { HitboxType.Attacking, new Color(1f, 0f, 0f, 0.4f) },
+        { HitboxType.Projectile, new Color(1f, 1f, 0f, 0.4f) },
+    };
+
     //Used for AlphaHitBoxManager to check Enter, Stay and Exit messages
     [HideInInspector]
     public bool MarkedForCollision;
@@ -216,18 +223,7 @@ public class ZeroHitbox : MonoBehaviour
 
             for (int i = 0; i < hitboxList.Length; i++)
             {
-                if (hitboxList[i].Type == HitboxType.Hittable)
-                {
-                    Gizmos.color = new Color(0f, 0f, 1f, 0.4f);
-                }
-                else if (hitboxList[i].Type == HitboxType.Attacking)
-                {
-                    Gizmos.color = new Color(1f, 0f, 0f, 0.4f);
-                }
-                else if (hitboxList[i].Type == HitboxType.Projectile)
-                {
-                    Gizmos.color = new Color(1f, 1f, 0f, 0.4f);
-                }
+                Gizmos.color = ColorDictionary[hitboxList[i].Type];
 
                 if (hitboxList[i].Shape == HitboxShape.Rectangle)
                 {
