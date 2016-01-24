@@ -130,7 +130,8 @@ public class BruteForceStrategy : CollisionStrategy
 
             for (int i = 0; i < currentHitboxes.Length; i++)
             {
-                if (currentHitboxes[i].Type == HitboxType.Projectile || currentHitboxes[i].Type == HitboxType.Attacking)
+                if (currentHitboxes[i].Type == HitboxType.Projectile
+                 || currentHitboxes[i].Type == HitboxType.Attacking)
                 {
                     foreach (ZeroHitbox alphaTemp in hitboxList)
                     {
