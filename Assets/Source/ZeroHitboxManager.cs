@@ -30,7 +30,7 @@ public class CollisionSolver
         this.strategy = strategy;
     }
 
-    public void SolveCollisions(List<ZeroHitbox> hitboxList)
+    public void SolveCollisions(IEnumerable<ZeroHitbox> hitboxList)
     {
         strategy.CheckForCollisions(hitboxList);
     }
@@ -38,7 +38,7 @@ public class CollisionSolver
 
 public abstract class CollisionStrategy
 {
-    public abstract void CheckForCollisions(List<ZeroHitbox> hitboxList);
+    public abstract void CheckForCollisions(IEnumerable<ZeroHitbox> hitboxList);
 }
 
 public class ZeroHitboxManager : MonoBehaviour
