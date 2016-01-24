@@ -74,9 +74,7 @@ public class ZeroHitboxEditor : Editor
                 {
                     Hitbox currentHitbox = currentKeyframe.hitboxes[i];
 
-                    ZeroHitbox.ShapeDictionary[currentHitbox.Shape].DrawSceneHandle(currentHitbox, targetComponents);
-
-                    currentKeyframe.hitboxes[i] = currentHitbox;
+                    currentKeyframe.hitboxes[i] = ZeroHitbox.ShapeDictionary[currentHitbox.Shape].DrawSceneHandle(currentHitbox, targetComponents);
                 }
             }
         }
