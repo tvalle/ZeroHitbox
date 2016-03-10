@@ -74,7 +74,8 @@ public class ZeroHitboxEditor : Editor
                 {
                     Hitbox currentHitbox = currentKeyframe.hitboxes[i];
 
-                    currentKeyframe.hitboxes[i] = ZeroHitbox.ShapeDictionary[currentHitbox.Shape].DrawSceneHandle(currentHitbox, targetComponents);
+                    currentKeyframe.hitboxes[i] = Hitbox.ShapeDictionary[currentHitbox.Shape]
+                                                        .DrawSceneHandle(currentHitbox, targetComponents);
                 }
             }
         }
@@ -147,11 +148,11 @@ public class ZeroHitboxEditor : Editor
 
                 if (currentKeyframe.hitboxes[i].Shape == HitboxShape.Rectangle)
                 {
-                    currentKeyframe.hitboxes[i].Rect = EditorGUILayout.RectField(currentKeyframe.hitboxes[i].Rect);
+                    currentKeyframe.hitboxes[i].Boundaries = EditorGUILayout.RectField(currentKeyframe.hitboxes[i].Boundaries);
                 }
                 else
                 {
-                    currentKeyframe.hitboxes[i].Radius = EditorGUILayout.FloatField("Radius ", currentKeyframe.hitboxes[i].Radius);
+                    //currentKeyframe.hitboxes[i].Boundaries = EditorGUILayout.FloatField("Radius ", currentKeyframe.hitboxes[i].Boundaries);
                 }
 
                 GUILayout.BeginHorizontal();
@@ -184,9 +185,9 @@ public class ZeroHitboxEditor : Editor
 
                 for (int i = 0; i < hitboxes.Length; i++)
                 {
-                    Hitbox hitbox = new Hitbox(hitboxes[i].Rect, hitboxes[i].Type);
+                    Hitbox hitbox = new Hitbox(hitboxes[i].Boundaries, hitboxes[i].Type);
                     hitbox.Shape = hitboxes[i].Shape;
-                    hitbox.Radius = hitboxes[i].Radius;
+                    hitbox.Boundaries = hitboxes[i].Boundaries;
 
                     currentKeyframe.hitboxes[i] = hitbox;
                 }
@@ -255,6 +256,7 @@ public class ZeroHitboxEditor : Editor
         {
             //TODO check why not working
             targetComponents.SpriteRenderer.sprite = targetComponents.spriteWhenGotFocus;
+            targetComponents = null;
             serializedObject.Update();
             serializedObject.ApplyModifiedProperties();
         }
@@ -279,6 +281,7 @@ public class ZeroHitboxEditor : Editor
         if (Selection.activeGameObject != targetComponents.GameObject)
         {
             OnLostFocus();
+            return;
         }
 
         //if (targetSpriteRenderer != null && targetAlphaHitbox.AnimationClips != null)

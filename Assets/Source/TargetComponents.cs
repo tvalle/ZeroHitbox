@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public struct TargetComponents
+public class TargetComponents
 {
     public TargetComponents(UnityEngine.Object target)
     {

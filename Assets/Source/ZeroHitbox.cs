@@ -25,41 +25,52 @@ public struct Hitbox
     public HitboxType Type;
     public HitboxShape Shape;
 
-    public Rect Rect;
+    public Vector3 Position { get; set; }
+    public Rect Boundaries { get; set; }
 
-    public float Radius;
-    public float CircleX, CircleY;
+    public static Dictionary<HitboxShape, IShape> ShapeDictionary = new Dictionary<HitboxShape, IShape>
+    {
+        { HitboxShape.Rectangle, new Rectangle() },
+        { HitboxShape.Circle, new Circle() }
+    };
+
+    public Hitbox(Rect boundaries, HitboxType hitboxType)
+    {
+        Type = hitboxType;
+        Position = Vector3.zero;
+        Boundaries = boundaries;
+
+        //Always assume default as rectangle
+        Shape = HitboxShape.Rectangle;
+    }
+
+    internal void DrawGizmo(Transform transform)
+    {
+        ShapeDictionary[Shape].DrawGizmo(this, transform);
+    }
 
     public Vector3 GetHandlePosition()
     {
         if (Shape == HitboxShape.Rectangle)
         {
-            return new Vector3(Rect.x, Rect.y, 0f);
+            return new Vector3(Boundaries.x, Boundaries.y, 0f);
         }
-        else
-        {
-            return new Vector3(CircleX, CircleY, 0f);
-        }
+        //else
+        //{
+        //    return new Vector3(CircleX, CircleY, 0f);
+        //}
+
+        return Vector3.zero;
     }
     public Vector3 GetHandleXScale()
     {
-        return new Vector3(Rect.x + Rect.width, Rect.y + Rect.height / 2);
+        return new Vector3(Boundaries.x + Boundaries.width, 
+                           Boundaries.y + Boundaries.height / 2);
     }
     public Vector3 GetHandleYScale()
     {
-        return new Vector3(Rect.x + Rect.width / 2, Rect.y + Rect.height);
-    }
-
-    public Hitbox(Rect rect, HitboxType hitboxType)
-    {
-        Rect = rect;
-        Type = hitboxType;
-
-        //Always assume default as rectangle
-        Shape = HitboxShape.Rectangle;
-
-        Radius = 0f;
-        CircleX = CircleY = 0f;
+        return new Vector3(Boundaries.x + Boundaries.width / 2, 
+                           Boundaries.y + Boundaries.height);
     }
 }
 
@@ -139,12 +150,6 @@ public class ZeroHitbox : MonoBehaviour
         { HitboxType.Hittable, new Color(0f, 0f, 1f, 0.4f) },
         { HitboxType.Attacking, new Color(1f, 0f, 0f, 0.4f) },
         { HitboxType.Projectile, new Color(1f, 1f, 0f, 0.4f) },
-    };
-
-    public static Dictionary<HitboxShape, IShape> ShapeDictionary = new Dictionary<HitboxShape, IShape>
-    {
-        { HitboxShape.Rectangle, new Rectangle() },
-        { HitboxShape.Circle, new Circle() }
     };
 
     //Used for AlphaHitBoxManager to check Enter, Stay and Exit messages
@@ -232,7 +237,7 @@ public class ZeroHitbox : MonoBehaviour
             {
                 Gizmos.color = ColorDictionary[hitboxList[i].Type];
 
-                ShapeDictionary[hitboxList[i].Shape].DrawGizmo(hitboxList[i], this.transform);
+                hitboxList[i].DrawGizmo(this.transform);
             }
         }
     }

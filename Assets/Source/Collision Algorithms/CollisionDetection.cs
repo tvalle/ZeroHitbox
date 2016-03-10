@@ -25,13 +25,13 @@ public static class CollisionDetection
 
         if (hitbox1.Shape == HitboxShape.Rectangle && hitbox2.Shape == HitboxShape.Rectangle)
         {
-            Rect rect1 = new Rect(gameObject1.transform.position.x + hitbox1.Rect.x,
-                                  gameObject1.transform.position.y + hitbox1.Rect.y,
-                                  hitbox1.Rect.width, hitbox1.Rect.height);
+            Rect rect1 = new Rect(gameObject1.transform.position.x + hitbox1.Boundaries.x,
+                                  gameObject1.transform.position.y + hitbox1.Boundaries.y,
+                                  hitbox1.Boundaries.width, hitbox1.Boundaries.height);
 
-            Rect rect2 = new Rect(gameObject2.transform.position.x + hitbox2.Rect.x,
-                                  gameObject2.transform.position.y + hitbox2.Rect.y,
-                                  hitbox2.Rect.width, hitbox2.Rect.height);
+            Rect rect2 = new Rect(gameObject2.transform.position.x + hitbox2.Boundaries.x,
+                                  gameObject2.transform.position.y + hitbox2.Boundaries.y,
+                                  hitbox2.Boundaries.width, hitbox2.Boundaries.height);
 
             return RectangleCollision(rect1, rect2);
         }
