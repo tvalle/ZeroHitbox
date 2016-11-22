@@ -3,44 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class HitboxCollisionInfo
-{
-    public GameObject GameObject;
-
-    public string CurrentAnimation;
-
-    public override string ToString()
-    {
-        string info;
-
-        info = "HitboxCollisionInfo" + Environment.NewLine;
-        info += "GameObject Name: " + GameObject.name + Environment.NewLine;
-        info += "CurrentAnimation: " + CurrentAnimation;
-
-        return info;
-    }
-}
-
-public class CollisionSolver
-{
-    CollisionStrategy strategy;
-
-    public CollisionSolver(CollisionStrategy strategy)
-    {
-        this.strategy = strategy;
-    }
-
-    public void SolveCollisions(IEnumerable<ZeroHitbox> hitboxList)
-    {
-        strategy.CheckForCollisions(hitboxList);
-    }
-}
-
-public abstract class CollisionStrategy
-{
-    public abstract void CheckForCollisions(IEnumerable<ZeroHitbox> hitboxList);
-}
-
 public class ZeroHitboxManager : MonoBehaviour
 {
     private static ZeroHitboxManager _instance = null;
